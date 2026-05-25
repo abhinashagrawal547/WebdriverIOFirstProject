@@ -1,5 +1,3 @@
-import { addAttachment } from "@wdio/allure-reporter";
-
 export const config: WebdriverIO.Config = {
     //
     // ====================
@@ -53,13 +51,10 @@ export const config: WebdriverIO.Config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [
-        {
-            browserName: 'chrome',
-            'wdio:enforceWebDriverClassic': false,
-            'wdio:maxInstances': 2
-        }
-    ],
+    capabilities: [{
+        browserName: 'chrome',
+        'wdio:enforceWebDriverClassic': true
+    }],
 
     //
     // ===================
@@ -108,7 +103,7 @@ export const config: WebdriverIO.Config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['lambdatest'],
+    services: [],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -131,11 +126,12 @@ export const config: WebdriverIO.Config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: [['allure', {
-                outputDir: 'allure-results',
-                disableWebDriverStepsReporting: false,
-                disableWebDriverScreenshotsReporting: false
-            }]
+    reporters: ['spec',
+                ['allure', {
+                    outputDir: 'allure-results',
+                    disableWebDriverStepsReporting: false,
+                    disableWebDriverScreenshotsReporting: false
+                }]
 
     ],
 
@@ -242,11 +238,10 @@ export const config: WebdriverIO.Config = {
      * @param {boolean} result.passed    true if test has passed, otherwise false
      * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-
-    afterTest: async function (test, context, {error, passed}) {
+    
+    afterTest: async function(test, context, { error, passed }) {
         if(!passed){
-            const screenshot =  await browser.takeScreenshot();
-            addAttachment('Screenshot on failure', Buffer.from(screenshot, 'base64'), 'image/png')
+            await browser.takeScreenshot();
         }
     },
 
